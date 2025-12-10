@@ -1,4 +1,6 @@
-package assignments.Ex2.MainFiles;
+package assignments.Ex2.MainFiles.Classes;
+
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 
 public class Index2D implements Pixel2D {
 

@@ -1,5 +1,6 @@
-package assignments.Ex2.MainFiles;
+package assignments.Ex2.MainFiles.Tests;
 
+import assignments.Ex2.MainFiles.Classes.Index2D;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

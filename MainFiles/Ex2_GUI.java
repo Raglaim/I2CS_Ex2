@@ -1,5 +1,7 @@
 package assignments.Ex2.MainFiles;
 
+import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+
 /**
  * Intro2CS_2026A
  * This class represents a Graphical User Interface (GUI) for Map2D.

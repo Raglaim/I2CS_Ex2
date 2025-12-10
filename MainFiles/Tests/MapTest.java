@@ -1,5 +1,9 @@
-package assignments.Ex2.MainFiles;
+package assignments.Ex2.MainFiles.Tests;
 
+import assignments.Ex2.MainFiles.Classes.Index2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
+import assignments.Ex2.MainFiles.Classes.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;

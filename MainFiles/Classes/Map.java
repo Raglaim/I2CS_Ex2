@@ -1,7 +1,8 @@
-package assignments.Ex2.MainFiles;
-import java.io.PrintStream;
+package assignments.Ex2.MainFiles.Classes;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
+
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * This class represents a 2D map (int[w][h]) as a "screen" or a raster matrix or maze over integers.
