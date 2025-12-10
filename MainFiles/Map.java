@@ -1,4 +1,5 @@
 package assignments.Ex2.MainFiles;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -14,7 +15,7 @@ public class Map implements Map2D, Serializable{
     // edit this class below
     private int W = 0;
     private int H = 0;
-    private int[][] MAP = null;
+    private int[][] MAP = {};
 	/**
 	 * Constructs a w*h 2D raster map with an init value v.
 	 * @param w
@@ -33,7 +34,10 @@ public class Map implements Map2D, Serializable{
 	 * @param data
 	 */
 	public Map(int[][] data) {
-		init(data);
+        if (data == null) {
+            this.MAP = new int [H][W];
+        }
+        init(data);
 	}
 	@Override
 	public void init(int w, int h, int v) {
@@ -58,6 +62,9 @@ public class Map implements Map2D, Serializable{
         if (arr == null || arr.length == 0) {
             throw new RuntimeException("Null or empty array");
         }
+        if (arr.length != arr[0].length) {
+            throw new RuntimeException("Non square array");
+        }
         for (int i = 0; i < arr.length; i++) {
             if (arr[i].length != arr[0].length) {
                 throw new RuntimeException("Ragged array");
@@ -69,9 +76,7 @@ public class Map implements Map2D, Serializable{
         H = arr.length;
         ans = new int[h][w];
         for (int i = 0; i < h; i+=1) {
-            for (int j = 0; j < w; j += 1) {
-                ans[i][j] = arr[i][j];
-            }
+            System.arraycopy(arr[i], 0, ans[i], 0, w);
         }
         MAP = new int[h][w];
         for (int i = 0; i < ans.length; i++) {
@@ -100,45 +105,63 @@ public class Map implements Map2D, Serializable{
 	@Override
 	public int getPixel(Pixel2D p) {
         int ans = -1;
-
+        ans = this.getPixel(p.getX(), p.getY());
         return ans;
 	}
 	@Override
 	public void setPixel(int x, int y, int v) {
-
+        this.MAP[y][x] = v;
     }
 	@Override
 	public void setPixel(Pixel2D p, int v) {
-
+        this.MAP[p.getY()][p.getX()] = v;
 	}
 
     @Override
     public boolean isInside(Pixel2D p) {
-        boolean ans = true;
-
-        return ans;
+        return p.getX() >= 0 && p.getX() < this.W && p.getY() >= 0 && p.getY() < this.H;
     }
 
     @Override
     public boolean sameDimensions(Map2D p) {
-        boolean ans = false;
-
-        return ans;
+        return this.W == p.getWidth() && this.H == p.getHeight();
     }
 
     @Override
     public void addMap2D(Map2D p) {
-
+        if (this.sameDimensions(p)){
+            for (int i = 0; i < this.H; i++) {
+                for (int j = 0; j < this.W; j++) {
+                    this.MAP[j][i] += p.getPixel(j, i);
+                }
+            }
+        }
     }
 
     @Override
     public void mul(double scalar) {
-
+        for (int i = 0; i < this.H; i++) {
+            for (int j = 0; j < this.W; j++) {
+                this.MAP[j][i] = (int)(this.MAP[j][i] * scalar);
+            }
+        }
     }
 
     @Override
     public void rescale(double sx, double sy) {
-
+        int newW = (int)(this.W * sx);
+        int newH = (int)(this.H * sy);
+        int [][] newMAP = new int[newH][newW];
+        for (int i = 0; i < newH; i++) {
+            for (int j = 0; j < newW; j++) {
+                int oldX = (int)(j / sx);
+                int oldY = (int)(i / sy);
+                newMAP[i][j] = this.MAP[oldY][oldX];
+            }
+        }
+        this.W = newW;
+        this.H = newH;
+        this.MAP = newMAP;
     }
 
     @Override
