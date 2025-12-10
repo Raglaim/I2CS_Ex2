@@ -13,7 +13,6 @@ import java.io.Serializable;
  */
 public class Map implements Map2D, Serializable{
 
-    // edit this class below
     private int W = 0;
     private int H = 0;
     private int[][] MAP = {};
@@ -86,47 +85,25 @@ public class Map implements Map2D, Serializable{
         }
 	}
 	@Override
-	public int[][] getMap() {
-        return this.MAP;
-	}
+	public int[][] getMap() {return this.MAP;}
 	@Override
-	public int getWidth() {
-        return this.W;
-    }
+	public int getWidth() {return this.W;}
 	@Override
-	public int getHeight() {
-        return this.H;
-    }
+	public int getHeight() {return this.H;}
 	@Override
-	public int getPixel(int x, int y) {
-        int ans = -1;
-        ans = this.MAP[y][x];
-        return ans;
-    }
+	public int getPixel(int x, int y) {return this.MAP[y][x];}
 	@Override
-	public int getPixel(Pixel2D p) {
-        int ans = -1;
-        ans = this.getPixel(p.getX(), p.getY());
-        return ans;
-	}
+	public int getPixel(Pixel2D p) {return this.getPixel(p.getX(), p.getY());}
 	@Override
-	public void setPixel(int x, int y, int v) {
-        this.MAP[y][x] = v;
-    }
+	public void setPixel(int x, int y, int v) {this.MAP[y][x] = v;}
 	@Override
-	public void setPixel(Pixel2D p, int v) {
-        this.MAP[p.getY()][p.getX()] = v;
-	}
+	public void setPixel(Pixel2D p, int v) {this.MAP[p.getY()][p.getX()] = v;}
 
     @Override
-    public boolean isInside(Pixel2D p) {
-        return p.getX() >= 0 && p.getX() < this.W && p.getY() >= 0 && p.getY() < this.H;
-    }
+    public boolean isInside(Pixel2D p) {return p.getX() >= 0 && p.getX() < this.W && p.getY() >= 0 && p.getY() < this.H;}
 
     @Override
-    public boolean sameDimensions(Map2D p) {
-        return this.W == p.getWidth() && this.H == p.getHeight();
-    }
+    public boolean sameDimensions(Map2D p) {return this.W == p.getWidth() && this.H == p.getHeight();}
 
     @Override
     public void addMap2D(Map2D p) {
