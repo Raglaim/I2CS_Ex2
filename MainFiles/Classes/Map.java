@@ -175,7 +175,7 @@ public class Map implements Map2D, Serializable{
                 for (int i = 0; i <= dx; i+=1) {
                     int x = p1.getX() + i;
                     int fx = (int) ((m * (x - p1.getX())) + p1.getY());
-                    this.setPixel(x, fx, color);
+                    this.setPixel(x-1, fx-1, color);
                 }
             }
             if (dx >= dy && p1.getX() > p2.getX()) {drawLine(p2, p1, color);}
@@ -183,7 +183,7 @@ public class Map implements Map2D, Serializable{
                 for (int i = 0; i <= dy; i+=1) {
                     int y = p1.getY() + i;
                     int gy = (int) (((y - p1.getY()) / m) + p1.getX());
-                    this.setPixel(gy, y, color);
+                    this.setPixel(gy-1, y-1, color);
                 }
             }
             if (dy > dx && p1.getY() > p2.getY()) {drawLine(p2, p1, color);}
