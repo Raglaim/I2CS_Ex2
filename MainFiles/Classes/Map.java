@@ -13,9 +13,18 @@ import java.io.Serializable;
  */
 public class Map implements Map2D, Serializable{
 
+    private static final int DEFAULT_W = 10;
+    private static final int DEFAULT_H = 10;
+    private static final int DEFAULT_V = 0;
+
+
+    public Map() {
+        init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
+    }
+
     private int W = 0;
     private int H = 0;
-    private int[][] MAP = {};
+    private int[][] MAP = new int[W][H];
 	/**
 	 * Constructs a w*h 2D raster map with an init value v.
 	 * @param w
@@ -35,7 +44,8 @@ public class Map implements Map2D, Serializable{
 	 */
 	public Map(int[][] data) {
         if (data == null) {
-            this.MAP = new int [H][W];
+            init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
+            return;
         }
         init(data);
 	}
@@ -50,11 +60,7 @@ public class Map implements Map2D, Serializable{
                 ans[i][j] = v;
             }
         }
-        for (int i = 0; i < ans.length; i++) {
-            MAP[i] = new int[ans[i].length];
-            System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
-        }
-
+        copy(ans, w, h);
     }
 	@Override
 	public void init(int[][] arr) {
@@ -65,7 +71,7 @@ public class Map implements Map2D, Serializable{
         if (arr.length != arr[0].length) {
             throw new RuntimeException("Non square array");
         }
-        for (int i = 0; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i+=1) {
             if (arr[i].length != arr[0].length) {
                 throw new RuntimeException("Ragged array");
             }
@@ -78,13 +84,18 @@ public class Map implements Map2D, Serializable{
         for (int i = 0; i < h; i+=1) {
             System.arraycopy(arr[i], 0, ans[i], 0, w);
         }
-        MAP = new int[h][w];
-        for (int i = 0; i < ans.length; i++) {
+        copy(ans, w, h);
+    }
+
+    private void copy(int[][] ans, int w, int h) {
+        this.MAP = new int[h][w];
+        for (int i = 0; i < ans.length; i+=1) {
             MAP[i] = new int[ans[i].length];
             System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
         }
-	}
-	@Override
+    }
+
+    @Override
 	public int[][] getMap() {return this.MAP;}
 	@Override
 	public int getWidth() {return this.W;}
@@ -108,9 +119,9 @@ public class Map implements Map2D, Serializable{
     @Override
     public void addMap2D(Map2D p) {
         if (this.sameDimensions(p)){
-            for (int i = 0; i < this.H; i++) {
-                for (int j = 0; j < this.W; j++) {
-                    this.MAP[j][i] += p.getPixel(j, i);
+            for (int y = 0; y < this.H; y+=1) {
+                for (int x = 0; x < this.W; x+=1) {
+                    this.MAP[y][x] += p.getPixel(x, y);
                 }
             }
         }
@@ -118,9 +129,9 @@ public class Map implements Map2D, Serializable{
 
     @Override
     public void mul(double scalar) {
-        for (int i = 0; i < this.H; i++) {
-            for (int j = 0; j < this.W; j++) {
-                this.MAP[j][i] = (int)(this.MAP[j][i] * scalar);
+        for (int y = 0; y < this.H; y+=1) {
+            for (int x = 0; x < this.W; x+=1) {
+                this.MAP[y][x] = (int)(this.MAP[y][x] * scalar);
             }
         }
     }
@@ -130,8 +141,8 @@ public class Map implements Map2D, Serializable{
         int newW = (int)(this.W * sx);
         int newH = (int)(this.H * sy);
         int [][] newMAP = new int[newH][newW];
-        for (int i = 0; i < newH; i++) {
-            for (int j = 0; j < newW; j++) {
+        for (int i = 0; i < newH; i+=1) {
+            for (int j = 0; j < newW; j+=1) {
                 int oldX = (int)(j / sx);
                 int oldY = (int)(i / sy);
                 newMAP[i][j] = this.MAP[oldY][oldX];
@@ -144,24 +155,69 @@ public class Map implements Map2D, Serializable{
 
     @Override
     public void drawCircle(Pixel2D center, double rad, int color) {
-
+        Circle c = new Circle(center, rad);
+        for (int i = 0; i < this.getHeight(); i+=1) {
+            for (int j = 0; j < this.getWidth(); j+=1) {
+                Pixel2D p = new Index2D(j, i);
+                if (c.contains(p)) {this.setPixel(p, color);}
+            }
+        }
     }
 
     @Override
     public void drawLine(Pixel2D p1, Pixel2D p2, int color) {
+        if (this.isInside(p1) && this.isInside(p2)) {
+            int dx = Math.abs(p2.getX() - p1.getX());
+            int dy = Math.abs(p2.getY() - p1.getY());
+            double m = (double) dy /dx; // slope
+            if (p1.equals(p2)) {this.setPixel(p1, color);}
+            if (dx >= dy && p1.getX() < p2.getX()) {
+                for (int i = 0; i <= dx; i+=1) {
+                    int x = p1.getX() + i;
+                    int fx = (int) ((m * (x - p1.getX())) + p1.getY());
+                    this.setPixel(x, fx, color);
+                }
+            }
+            if (dx >= dy && p1.getX() > p2.getX()) {drawLine(p2, p1, color);}
+            if (dy > dx && p1.getY() < p2.getY()) {
+                for (int i = 0; i <= dy; i+=1) {
+                    int y = p1.getY() + i;
+                    int gy = (int) (((y - p1.getY()) / m) + p1.getX());
+                    this.setPixel(gy, y, color);
+                }
+            }
+            if (dy > dx && p1.getY() > p2.getY()) {drawLine(p2, p1, color);}
+        }
 
     }
 
     @Override
     public void drawRect(Pixel2D p1, Pixel2D p2, int color) {
-
+        if (this.isInside(p1) && this.isInside(p2)) {
+            int xStart = Math.min(p1.getX(), p2.getX());
+            int xEnd = Math.max(p1.getX(), p2.getX());
+            int yStart = Math.min(p1.getY(), p2.getY());
+            int yEnd = Math.max(p1.getY(), p2.getY());
+            for (int i = yStart; i <= yEnd; i+=1) {
+                for (int j = xStart; j <= xEnd; j+=1) {
+                    this.setPixel(j, i, color);
+                }
+            }
+        }
     }
 
     @Override
     public boolean equals(Object ob) {
-        boolean ans = false;
-
-        return ans;
+        if (!(ob instanceof Map2D)) {return false;}
+        else if (!(this.sameDimensions((Map2D)ob))) {return false;}
+        else {
+            for (int y = 0; y < this.H; y+=1) {
+                for (int x = 0; x < this.W; x+=1) {
+                    if (this.getPixel(x,y) != ((Map2D) ob).getPixel(x,y)) {return false;}
+                }
+            }
+            return true;
+        }
     }
 	@Override
 	/** 
