@@ -85,14 +85,6 @@ public class Map implements Map2D, Serializable{
         copy(ans, w, h);
     }
 
-    private void copy(int[][] ans, int w, int h) {
-        this.MAP = new int[h][w];
-        for (int i = 0; i < ans.length; i+=1) {
-            MAP[i] = new int[ans[i].length];
-            System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
-        }
-    }
-
     @Override
 	public int[][] getMap() {return this.MAP;}
 	@Override
@@ -246,4 +238,23 @@ public class Map implements Map2D, Serializable{
     }
 	////////////////////// Private Methods ///////////////////////
 
+    private void copy(int[][] ans, int w, int h) {
+        this.MAP = new int[h][w];
+        for (int i = 0; i < ans.length; i+=1) {
+            MAP[i] = new int[ans[i].length];
+            System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
+        }
+    }
+
+    public String toString() {
+        String ans = "";
+        for (int y = 0; y < this.H; y++) {
+            String line = "";
+            for (int x = 0; x < this.W; x++) {
+                line += this.MAP[y][x] + " ";
+            }
+            ans += line + "\n";
+        }
+        return ans;
+    }
 }

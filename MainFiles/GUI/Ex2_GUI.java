@@ -1,9 +1,11 @@
 package assignments.Ex2.MainFiles.GUI;
 
-import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
-import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
-import assignments.Ex2.MainFiles.Classes.Map;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * Intro2CS_2026A
@@ -46,9 +48,15 @@ public class Ex2_GUI {
      * @param mapFileName
      */
     public static void saveMap(Map2D map, String mapFileName) {
-
-
+        Path path = Paths.get(mapFileName);
+        String content = map.toString();
+        try {
+            Files.writeString(path, content);
+            System.out.println("File written: " + path.toAbsolutePath());
+        }
+        catch (IOException e) {e.printStackTrace();}
     }
+
     public static void main(String[] a) {
         String mapFile = "map.txt";
         Map2D map = loadMap(mapFile);
@@ -60,7 +68,13 @@ public class Ex2_GUI {
         switch (v){
             case 0 -> StdDraw.setPenColor(StdDraw.WHITE);
             case 1 -> StdDraw.setPenColor(StdDraw.BLACK);
-            case 2 -> StdDraw.setPenColor(StdDraw.GREEN);
+            case 2 -> StdDraw.setPenColor(StdDraw.RED);
+            case 3 -> StdDraw.setPenColor(StdDraw.GREEN);
+            case 4 -> StdDraw.setPenColor(StdDraw.BLUE);
         }
+    }
+
+    private static boolean checkTxt(String fileName) {
+        return fileName.toLowerCase().endsWith(".txt");
     }
 }
