@@ -1,6 +1,9 @@
 package assignments.Ex2.MainFiles.GUI;
 
+import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
+import assignments.Ex2.MainFiles.Classes.Map;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,10 +39,15 @@ public class Ex2_GUI {
      * @param mapFileName
      * @return
      */
-    public static Map2D loadMap(String mapFileName) {
-        Map2D ans = null;
-
-        return ans;
+    public static Map loadMap(String mapFileName) {
+        Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
+        Path path = targetDir.resolve(mapFileName);
+        String content = "";
+        try {
+            content = Files.readString(path);
+        }
+        catch (IOException e) {e.printStackTrace();}
+        return Map.mapFromString(content);
     }
 
     /**
@@ -48,11 +56,11 @@ public class Ex2_GUI {
      * @param mapFileName
      */
     public static void saveMap(Map2D map, String mapFileName) {
-        Path path = Paths.get(mapFileName);
+        Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
+        Path path = targetDir.resolve(mapFileName);
         String content = map.toString();
         try {
             Files.writeString(path, content);
-            System.out.println("File written: " + path.toAbsolutePath());
         }
         catch (IOException e) {e.printStackTrace();}
     }

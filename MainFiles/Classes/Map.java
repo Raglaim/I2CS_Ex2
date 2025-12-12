@@ -247,14 +247,33 @@ public class Map implements Map2D, Serializable{
     }
 
     public String toString() {
-        String ans = "";
-        for (int y = 0; y < this.H; y++) {
-            String line = "";
-            for (int x = 0; x < this.W; x++) {
-                line += this.MAP[y][x] + " ";
+        StringBuilder sb = new StringBuilder();
+        for (int y = 0; y < this.H; y+=1) {
+            for (int x = 0; x < this.W; x+=1) {
+                sb.append(this.MAP[y][x]).append(' ');
             }
-            ans += line + "\n";
+            sb.append('\n');
         }
-        return ans;
+        return sb.toString();
+    }
+
+    public static Map mapFromString(String mapS) {
+        String[] rows = mapS.split("\n");
+        int h = rows.length;
+        int w = rows[0].replace(" ", "").length();
+        int[][] m = new int[h][w];
+        for (int y = 0; y < h; y++) {
+            String[] pixels = rows[y].trim().split(" ");
+            for (int x = 0; x < w; x+=1) {
+                m[y][x] = Integer.parseInt(pixels[x]);
+            }
+        }
+        return new Map(m);
+    }
+
+    static void main() {
+        Map m = new Map();
+        Map m1 = mapFromString(m.toString());
+        System.out.println(m1.toString());
     }
 }
