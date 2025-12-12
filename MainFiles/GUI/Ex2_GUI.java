@@ -40,14 +40,18 @@ public class Ex2_GUI {
      * @return
      */
     public static Map loadMap(String mapFileName) {
-        Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
-        Path path = targetDir.resolve(mapFileName);
-        String content = "";
-        try {
-            content = Files.readString(path);
+        if (checkTxt(mapFileName)) {
+            Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
+            Path path = targetDir.resolve(mapFileName);
+            String content = "";
+            try {
+                content = Files.readString(path);
+            }
+            catch (IOException e) {e.printStackTrace();}
+            return Map.mapFromString(content);
+        } else {
+            return new Map();
         }
-        catch (IOException e) {e.printStackTrace();}
-        return Map.mapFromString(content);
     }
 
     /**
