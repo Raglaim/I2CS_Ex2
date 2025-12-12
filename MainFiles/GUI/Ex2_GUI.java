@@ -16,10 +16,16 @@ import assignments.Ex2.MainFiles.Classes.Map;
  */
 public class Ex2_GUI {
     public static void drawMap(Map2D map) {
+        StdDraw.setCanvasSize(500,500);
+        StdDraw.setXscale(0,map.getWidth());
+        StdDraw.setYscale(0,map.getHeight());
+        StdDraw.clear(StdDraw.WHITE);
         for (int y = 0; y < map.getHeight(); y+=1) {
             for (int x = 0; x < map.getWidth(); x++) {
-                setColor(map.getPixel(x,y));
-                StdDraw.filledSquare(x+0.5,y+0.5,0.5);
+                if (!(map.getPixel(x, y) == 0)) {
+                    setColor(map.getPixel(x,y));
+                    StdDraw.filledSquare(x+0.5,y+0.5,0.5);
+                }
             }
         }
     }
@@ -44,20 +50,9 @@ public class Ex2_GUI {
 
     }
     public static void main(String[] a) {
-//        String mapFile = "map.txt";
-//        Map2D map = loadMap(mapFile);
-//        drawMap(map);
-        Map2D map = new Map();
-        Pixel2D pixel1 = new Index2D(2,2);
-        Pixel2D pixel2 = new Index2D(5,8);
-        map.drawLine(pixel1,pixel2,2);
-        StdDraw.setCanvasSize(500,500);
-        StdDraw.clear(StdDraw.BLACK);
-        StdDraw.setXscale(0,10);
-        StdDraw.setYscale(0,10);
-
+        String mapFile = "map.txt";
+        Map2D map = loadMap(mapFile);
         drawMap(map);
-
     }
     /// ///////////// Private functions ///////////////
 

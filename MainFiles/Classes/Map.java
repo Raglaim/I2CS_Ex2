@@ -16,8 +16,6 @@ public class Map implements Map2D, Serializable{
     private static final int DEFAULT_W = 10;
     private static final int DEFAULT_H = 10;
     private static final int DEFAULT_V = 0;
-
-
     public Map() {
         init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
     }
