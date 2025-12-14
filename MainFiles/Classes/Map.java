@@ -160,7 +160,9 @@ public class Map implements Map2D, Serializable{
             int dx = Math.abs(p2.getX() - p1.getX());
             int dy = Math.abs(p2.getY() - p1.getY());
             double m = (double) dy /dx; // slope
+            // 1
             if (p1.equals(p2)) {this.setPixel(p1, color);}
+            // 2
             if (dx >= dy && p1.getX() < p2.getX()) {
                 for (int i = 0; i <= dx; i+=1) {
                     int x = p1.getX() + i;
@@ -168,7 +170,9 @@ public class Map implements Map2D, Serializable{
                     this.setPixel(x-1, fx-1, color);
                 }
             }
+            // 3
             if (dx >= dy && p1.getX() > p2.getX()) {drawLine(p2, p1, color);}
+            // 4
             if (dy > dx && p1.getY() < p2.getY()) {
                 for (int i = 0; i <= dy; i+=1) {
                     int y = p1.getY() + i;
@@ -176,6 +180,7 @@ public class Map implements Map2D, Serializable{
                     this.setPixel(gy-1, y-1, color);
                 }
             }
+            // 5
             if (dy > dx && p1.getY() > p2.getY()) {drawLine(p2, p1, color);}
         }
 
@@ -215,9 +220,35 @@ public class Map implements Map2D, Serializable{
 	 * https://en.wikipedia.org/wiki/Flood_fill
 	 */
 	public int fill(Pixel2D xy, int new_v,  boolean cyclic) {
-		int ans = -1;
+		int ans = 0;
+        int startingColor = this.getPixel(xy);
+        this.setPixel(xy, new_v);
 
-		return ans;
+        // Left
+        Pixel2D lP = new Index2D (xy.getX()-1,xy.getY());
+        if (this.isInside(lP) && this.getPixel(lP) == startingColor) {
+            ans += this.fill(lP, new_v, cyclic);
+        }
+
+        // Right
+        Pixel2D rP = new Index2D (xy.getX()+1,xy.getY());
+        if (this.isInside(rP) && this.getPixel(rP) == startingColor) {
+            ans += this.fill(rP, new_v, cyclic);
+        }
+
+        // Up
+        Pixel2D uP = new Index2D (xy.getX(),xy.getY()+1);
+        if (this.isInside(uP) && this.getPixel(uP) == startingColor) {
+            ans += this.fill(uP, new_v, cyclic);
+        }
+
+        //Down
+        Pixel2D dP = new Index2D (xy.getX(),xy.getY()-1);
+        if (this.isInside(dP) && this.getPixel(dP) == startingColor) {
+            ans += this.fill(dP, new_v, cyclic);
+        }
+
+		return ans += 1;
 	}
 
 	@Override
@@ -236,6 +267,7 @@ public class Map implements Map2D, Serializable{
 
         return ans;
     }
+
 	////////////////////// Private Methods ///////////////////////
 
     private void copy(int[][] ans, int w, int h) {
@@ -271,9 +303,4 @@ public class Map implements Map2D, Serializable{
         return new Map(m);
     }
 
-    static void main() {
-        Map m = new Map();
-        Map m1 = mapFromString(m.toString());
-        System.out.println(m1.toString());
-    }
 }

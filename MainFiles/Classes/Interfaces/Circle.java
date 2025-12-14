@@ -1,8 +1,6 @@
 package assignments.Ex2.MainFiles.Classes.Interfaces;
 
-import assignments.Ex2.MainFiles.Classes.Circle;
-
-public interface GeoShapes {
+public interface Circle {
 
     /**
      * Creates and returns an independent copy (deep copy) of this shape.
@@ -23,7 +21,7 @@ public interface GeoShapes {
      *
      * @return a new GeoShapes instance that is an independent copy of this shape
      */
-    GeoShapes copy(Circle other);
+    Circle copy(assignments.Ex2.MainFiles.Classes.Circle other);
 
     /**
      * Computes the area (in square units) of this shape.

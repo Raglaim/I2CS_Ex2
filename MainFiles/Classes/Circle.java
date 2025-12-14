@@ -1,9 +1,8 @@
 package assignments.Ex2.MainFiles.Classes;
 
-import assignments.Ex2.MainFiles.Classes.Interfaces.GeoShapes;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 
-public class Circle implements GeoShapes {
+public class Circle implements assignments.Ex2.MainFiles.Classes.Interfaces.Circle {
 
     private int X = 0;
     private int Y = 0;
