@@ -224,16 +224,16 @@ public class Map implements Map2D, Serializable{
         int startingColor = this.getPixel(xy);
         this.setPixel(xy, new_v);
 
-        // Left
-        Pixel2D lP = new Index2D (xy.getX()-1,xy.getY());
-        if (this.isInside(lP) && this.getPixel(lP) == startingColor) {
-            ans += this.fill(lP, new_v, cyclic);
-        }
-
         // Right
         Pixel2D rP = new Index2D (xy.getX()+1,xy.getY());
         if (this.isInside(rP) && this.getPixel(rP) == startingColor) {
             ans += this.fill(rP, new_v, cyclic);
+        }
+
+        // Left
+        Pixel2D lP = new Index2D (xy.getX()-1,xy.getY());
+        if (this.isInside(lP) && this.getPixel(lP) == startingColor) {
+            ans += this.fill(lP, new_v, cyclic);
         }
 
         // Up
