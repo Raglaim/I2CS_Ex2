@@ -38,16 +38,18 @@ public class Index2D implements Pixel2D {
     }
 
     @Override
-    public boolean equals(Object p) {
-        boolean ans = true;
-        if (!(p instanceof Pixel2D)) {
-            return false;
-        } else {
-            Pixel2D other = (Pixel2D) p;
-            if (this.X != other.getX() || this.Y != other.getY()) {
-                return false;
-            }
-        }
-        return ans;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Index2D)) return false;
+        Index2D other = (Index2D) o;
+        return this.X == other.X && this.Y == other.Y;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Integer.hashCode(X);
+        result = 31 * result + Integer.hashCode(Y);
+        return result;
+
     }
 }

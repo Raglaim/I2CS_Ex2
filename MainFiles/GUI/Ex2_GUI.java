@@ -1,9 +1,7 @@
 package assignments.Ex2.MainFiles.GUI;
 
-import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
-import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
-import assignments.Ex2.MainFiles.Classes.Map;
+import assignments.Ex2.MainFiles.Classes.MyMap;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +37,7 @@ public class Ex2_GUI {
      * @param mapFileName
      * @return
      */
-    public static Map loadMap(String mapFileName) {
+    public static MyMap loadMap(String mapFileName) {
         if (checkTxt(mapFileName)) {
             Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
             Path path = targetDir.resolve(mapFileName);
@@ -48,9 +46,9 @@ public class Ex2_GUI {
                 content = Files.readString(path);
             }
             catch (IOException e) {e.printStackTrace();}
-            return Map.mapFromString(content);
+            return MyMap.mapFromString(content);
         } else {
-            return new Map();
+            return new MyMap();
         }
     }
 

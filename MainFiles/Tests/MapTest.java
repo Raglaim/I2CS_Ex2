@@ -3,7 +3,7 @@ package assignments.Ex2.MainFiles.Tests;
 import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
-import assignments.Ex2.MainFiles.Classes.Map;
+import assignments.Ex2.MainFiles.Classes.MyMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -21,10 +21,10 @@ class MapTest {
     private int[][] _map_3_3 = {{0,1,0}, {1,0,1}, {0,1,0}};
     private Map2D _m0, _m1, _m3_3;
     @BeforeEach
-    void setUp() {
-        _m0 = new Map();
-        _m1 = new Map();
-        _m3_3 = new Map(_map_3_3);
+    public void setUp() {
+        _m0 = new MyMap();
+        _m1 = new MyMap();
+        _m3_3 = new MyMap(_map_3_3);
     }
     @Test
     @Timeout(value = 1, unit = SECONDS)
@@ -65,13 +65,13 @@ class MapTest {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
-    private static final Map2D M = new Map();
+    private static final Map2D M = new MyMap();
 
     @Test
     void testMapElad() {
-        Map2D mapResult = new Map(RESULT);
-        Map2D m1 = new Map(10,10,0);
-        Map2D m2 = new Map(10);
+        Map2D mapResult = new MyMap(RESULT);
+        Map2D m1 = new MyMap(10,10,0);
+        Map2D m2 = new MyMap(10);
         assertEquals(m1, mapResult);
         assertEquals(m2, mapResult);
     }
@@ -83,7 +83,7 @@ class MapTest {
         assertThrows(RuntimeException.class, () -> M.init(null));
         assertThrows(RuntimeException.class, () -> M.init(m1));
         assertThrows(RuntimeException.class, () -> M.init(m2));
-        Map2D m = new Map();
+        Map2D m = new MyMap();
         m.init(RESULT);
         assertEquals(M, m);
     }
@@ -124,13 +124,13 @@ class MapTest {
 
     @Test
     void testSameDimensionsElad() {
-        Map2D m = new Map(RESULT);
+        Map2D m = new MyMap(RESULT);
         assertTrue(M.sameDimensions(m));
     }
 
     @Test
     void testAddMap2DElad() {
-        Map2D m = new Map(RESULT);
+        Map2D m = new MyMap(RESULT);
         m.addMap2D(M);
         assertEquals(M,m);
         Pixel2D p1 = new Index2D(0,0);
@@ -160,7 +160,7 @@ class MapTest {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-        assertThrows(RuntimeException.class, () -> m.addMap2D(new Map(map)));
+        assertThrows(RuntimeException.class, () -> m.addMap2D(new MyMap(map)));
     }
     @Test
     void testMulElad() {
@@ -168,13 +168,13 @@ class MapTest {
                 {1,2},
                 {3,4}
         };
-        Map2D m = new Map(map);
+        Map2D m = new MyMap(map);
         m.mul(2);
         int [][] mapR = {
                 {2,4},
                 {6,8}
         };
-        Map2D mR = new Map(mapR);
+        Map2D mR = new MyMap(mapR);
         assertEquals(mR,m);
     }
 
@@ -186,7 +186,7 @@ class MapTest {
                 { 9, 10, 11, 12},
                 {13, 14, 15, 16}
         };
-        Map2D m = new Map(src);
+        Map2D m = new MyMap(src);
         m.rescale(0.5, 0.5);
         assertEquals(2, m.getWidth());
         assertEquals(2, m.getHeight());

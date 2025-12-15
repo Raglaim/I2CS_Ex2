@@ -3,6 +3,10 @@ import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * This class represents a 2D map (int[w][h]) as a "screen" or a raster matrix or maze over integers.
@@ -11,12 +15,12 @@ import java.io.Serializable;
  * @author boaz.benmoshe
  *
  */
-public class Map implements Map2D, Serializable{
+public class MyMap implements Map2D, Serializable{
 
     private static final int DEFAULT_W = 10;
     private static final int DEFAULT_H = 10;
     private static final int DEFAULT_V = 0;
-    public Map() {
+    public MyMap() {
         init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
     }
 
@@ -29,18 +33,18 @@ public class Map implements Map2D, Serializable{
 	 * @param h
 	 * @param v
 	 */
-	public Map(int w, int h, int v) {init(w, h, v);}
+	public MyMap(int w, int h, int v) {init(w, h, v);}
 	/**
 	 * Constructs a square map (size*size).
 	 * @param size
 	 */
-	public Map(int size) {this(size,size, 0);}
+	public MyMap(int size) {this(size,size, 0);}
 	
 	/**
 	 * Constructs a map from a given 2D array.
 	 * @param data
 	 */
-	public Map(int[][] data) {
+	public MyMap(int[][] data) {
         if (data == null) {
             init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
             return;
@@ -259,6 +263,10 @@ public class Map implements Map2D, Serializable{
 	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic) {
 		Pixel2D[] ans = null;  // the result.
 
+        Map<Pixel2D, Pixel2D> prev = this.solve(p1);
+
+        ans = reconstructPath(p1, p2, prev).getList();
+
 		return ans;
 	}
     @Override
@@ -289,7 +297,7 @@ public class Map implements Map2D, Serializable{
         return sb.toString();
     }
 
-    public static Map mapFromString(String mapS) {
+    public static MyMap mapFromString(String mapS) {
         String[] rows = mapS.split("\n");
         int h = rows.length;
         int w = rows[0].replace(" ", "").length();
@@ -300,7 +308,107 @@ public class Map implements Map2D, Serializable{
                 m[y][x] = Integer.parseInt(pixels[x]);
             }
         }
-        return new Map(m);
+        return new MyMap(m);
     }
 
+    private int count(int v){
+        int ans = 0;
+        for (int y = 0; y < this.H; y+=1) {
+            for (int x = 0; x < this.W; x+=1) {
+                if (getPixel(x, y) == v){
+                    ans += 1;
+                }
+            }
+        }
+        return ans;
+    }
+
+    private Map<Pixel2D, Pixel2D> solve(Pixel2D s){
+        int v = this.getPixel(s);
+        PixelsContainer q = new PixelsContainer();
+        q.enqueue(s);
+        Map<Pixel2D,Boolean> visited = new HashMap<>();
+        for (int y = 0; y < this.H; y+=1) {
+            for (int x = 0; x < this.W; x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (getPixel(p) == v) {
+                    visited.put(p, false);
+                }
+            }
+        }
+        visited.replace(s,true);
+
+        Map<Pixel2D,Pixel2D> prev = new HashMap<>();
+        while (!q.isEmpty()){
+            Pixel2D node = q.dequeue();
+            PixelsContainer neighbours = this.checkNeighbours(node,v);
+
+            for (Pixel2D next : neighbours.getList()) {
+                if (!visited.get(next)) {
+                    q.enqueue(next);
+                    visited.put(next, true);
+                    prev.put(next,node);
+                }
+            }
+        }
+
+        return prev;
+    }
+
+    private PixelsContainer checkNeighbours(Pixel2D node, int v) {
+        PixelsContainer neighbours = new PixelsContainer();
+
+        // Right
+        Pixel2D rNode = new Index2D (node.getX()+1,node.getY());
+        if (this.isInside(rNode) && this.getPixel(rNode) == v) {
+            neighbours.enqueue(rNode);
+        }
+
+        // Left
+        Pixel2D lNode = new Index2D (node.getX()-1,node.getY());
+        if (this.isInside(lNode) && this.getPixel(lNode) == v) {
+            neighbours.enqueue(lNode);
+        }
+
+        // Up
+        Pixel2D uNode = new Index2D (node.getX(),node.getY()+1);
+        if (this.isInside(uNode) && this.getPixel(uNode) == v) {
+            neighbours.enqueue(uNode);
+        }
+
+        // Down
+        Pixel2D dNode = new Index2D (node.getX(),node.getY()-1);
+        if (this.isInside(dNode) && this.getPixel(dNode) == v) {
+            neighbours.enqueue(dNode);
+        }
+
+        return neighbours;
+    }
+
+    public PixelsContainer reconstructPath(Pixel2D s, Pixel2D e, Map<Pixel2D, Pixel2D> prev){
+        PixelsContainer path = new PixelsContainer();
+        for (Pixel2D at = e; at != null ; at = prev.get(at)) {
+            path.enqueue(at);
+        }
+
+        path.reverse();
+
+        return path;
+    }
+
+    public static void main() {
+        int [][] map = {
+                {1,1,1,0,1,1,1},
+                {1,0,1,1,1,0,1},
+                {1,0,1,1,1,1,1},
+                {1,1,0,0,1,1,1},
+                {0,1,0,1,1,0,1},
+                {0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0},
+        };
+        Map2D m = new MyMap(map);
+        Pixel2D s = new Index2D(0,0);
+        Pixel2D e = new Index2D(3,4);
+        System.out.println(Arrays.toString(m.shortestPath(s, e, 0, true)));
+    }
 }
