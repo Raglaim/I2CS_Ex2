@@ -395,20 +395,4 @@ public class MyMap implements Map2D, Serializable{
 
         return path;
     }
-
-    public static void main() {
-        int [][] map = {
-                {1,1,1,0,1,1,1},
-                {1,0,1,1,1,0,1},
-                {1,0,1,1,1,1,1},
-                {1,1,0,0,1,1,1},
-                {0,1,0,1,1,0,1},
-                {0,0,0,0,0,0,0},
-                {0,0,0,0,0,0,0},
-        };
-        Map2D m = new MyMap(map);
-        Pixel2D s = new Index2D(0,0);
-        Pixel2D e = new Index2D(3,4);
-        System.out.println(Arrays.toString(m.shortestPath(s, e, 0, true)));
-    }
 }

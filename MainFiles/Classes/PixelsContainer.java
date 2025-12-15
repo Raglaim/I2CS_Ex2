@@ -48,15 +48,4 @@ public class PixelsContainer {
         }
         return ans.toString();
     }
-
-    public static void main() {
-        PixelsContainer pc = new PixelsContainer();
-        Pixel2D p1 = new Index2D(3,2);
-        Pixel2D p2 = new Index2D(2,3);
-        pc.enqueue(p1);
-        pc.enqueue(p2);
-        System.out.println(pc.toString());
-        pc.reverse();
-        System.out.println(pc.toString());
-    }
 }
