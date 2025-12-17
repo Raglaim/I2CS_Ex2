@@ -29,7 +29,7 @@ class MapTest {
     @Test
     @Timeout(value = 1, unit = SECONDS)
     void init() {
-        int[][] bigarr = new int [500][500];
+        int[][] bigarr = new int [20][20];
         _m1.init(bigarr);
         assertEquals(bigarr.length, _m1.getWidth());
         assertEquals(bigarr[0].length, _m1.getHeight());

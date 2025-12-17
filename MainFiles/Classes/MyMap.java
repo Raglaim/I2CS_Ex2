@@ -223,57 +223,160 @@ public class MyMap implements Map2D, Serializable{
 	 * Fills this map with the new color (new_v) starting from p.
 	 * https://en.wikipedia.org/wiki/Flood_fill
 	 */
-	public int fill(Pixel2D xy, int new_v,  boolean cyclic) {
-		int ans = 0;
-        int startingColor = this.getPixel(xy);
-        this.setPixel(xy, new_v);
+	public int fill(Pixel2D start, int new_v,  boolean cyclic) {
+        int ans = 0; // making result
+        int startingColor = this.getPixel(start);
+        // checking if the starting pixel is already the new color
+        if (startingColor == new_v) {return 0;}
+        this.setPixel(start, new_v);
+        ans += 1;
 
-        // Right
-        Pixel2D rP = new Index2D (xy.getX()+1,xy.getY());
-        if (this.isInside(rP) && this.getPixel(rP) == startingColor) {
-            ans += this.fill(rP, new_v, cyclic);
+        // using a BFS method to set every pixel that is visited into the new color
+        PixelsContainer q = new PixelsContainer();
+        q.enqueue(start);
+        if (!cyclic) {
+            while (!q.isEmpty()) {
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = this.checkNeighboursNotCyclic(node, startingColor);
+                for (Pixel2D next : neighbours.getList()) {
+                    if (this.getPixel(next) != new_v) {
+                        q.enqueue(next);
+                        this.setPixel(next, new_v);
+                        ans += 1;
+                    }
+                }
+            }
+
         }
-
-        // Left
-        Pixel2D lP = new Index2D (xy.getX()-1,xy.getY());
-        if (this.isInside(lP) && this.getPixel(lP) == startingColor) {
-            ans += this.fill(lP, new_v, cyclic);
+        else {
+            while (!q.isEmpty()) {
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = this.checkNeighboursCyclic(node, startingColor);
+                for (Pixel2D next : neighbours.getList()) {
+                    if (this.getPixel(next) != new_v) {
+                        q.enqueue(next);
+                        this.setPixel(next, new_v);
+                        ans += 1;
+                    }
+                }
+            }
         }
-
-        // Up
-        Pixel2D uP = new Index2D (xy.getX(),xy.getY()+1);
-        if (this.isInside(uP) && this.getPixel(uP) == startingColor) {
-            ans += this.fill(uP, new_v, cyclic);
-        }
-
-        //Down
-        Pixel2D dP = new Index2D (xy.getX(),xy.getY()-1);
-        if (this.isInside(dP) && this.getPixel(dP) == startingColor) {
-            ans += this.fill(dP, new_v, cyclic);
-        }
-
-		return ans += 1;
-	}
+        return ans;
+    }
 
 	@Override
 	/**
 	 * BFS like shortest the computation based on iterative raster implementation of BFS, see:
 	 * https://en.wikipedia.org/wiki/Breadth-first_search
 	 */
-	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic) {
-		Pixel2D[] ans = null;  // the result.
+	public Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) {
+        Pixel2D[] ans = null;  // the result.
 
-        Map<Pixel2D, Pixel2D> prev = this.solve(p1);
+        // making a copy for the maze
+        Map2D maze = new MyMap(getMap());
 
-        ans = reconstructPath(p1, p2, prev).getList();
+        // setting obsColor to -1
+        if (obsColor != -1) {
+            for (int y = 0; y < this.getHeight(); y+=1) {
+                for (int x = 0; x < this.getWidth(); x+=1) {
+                    Pixel2D p = new Index2D(x,y);
+                    if (maze.getPixel(p) == obsColor) {
+                        maze.setPixel(p,-1);
+                    }
+                }
+            }
+            obsColor = -1;
+        }
+
+        // setting every else pixel to 0
+        for (int y = 0; y < this.getHeight(); y+=1) {
+            for (int x = 0; x < this.getWidth(); x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (maze.getPixel(p) != obsColor) {
+                    maze.setPixel(p,0);
+                }
+            }
+        }
+        // checking if there is a way to get from s pixel to e pixel
+        maze.fill(start,1,cyclic);
+        if (maze.getPixel(end) != 1) {return null;}
+
+        // making a BFS dictionary
+        Map<Pixel2D, Pixel2D> prev = this.solve(start,cyclic);
+
+        // using the dictionary to get from e pixel to s pixel
+        ans = reconstructPath(start, end, prev).getList();
 
 		return ans;
 	}
+
     @Override
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
         Map2D ans = null;  // the result.
 
+        // making a copy for the maze
+        Map2D maze = new MyMap(getMap());
+
+        // setting obsColor to -1
+        if (obsColor != -1) {
+            for (int y = 0; y < this.getHeight(); y+=1) {
+                for (int x = 0; x < this.getWidth(); x+=1) {
+                    Pixel2D p = new Index2D(x,y);
+                    if (maze.getPixel(p) == obsColor) {
+                        maze.setPixel(p,-1);
+                    }
+                }
+            }
+            obsColor = -1;
+        }
+
+        // setting every else pixel to 0
+        for (int y = 0; y < this.getHeight(); y+=1) {
+            for (int x = 0; x < this.getWidth(); x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (maze.getPixel(p) != obsColor) {
+                    maze.setPixel(p,0);
+                }
+            }
+        }
+
+        // setting every reachable pixel to 1
+        maze.fill(start,1,cyclic);
+
+        // setting every unreachable pixel to -1
+        for (int y = 0; y < this.getHeight(); y+=1) {
+            for (int x = 0; x < this.getWidth(); x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (maze.getPixel(p) == 0) {
+                    maze.setPixel(p,-1);
+                }
+            }
+        }
+
+        ans = new MyMap(maze.getMap());
+        // setting every pixel to its distance from the start
+        for (int y = 0; y < this.getHeight(); y+=1) {
+            for (int x = 0; x < this.getWidth(); x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (maze.getPixel(p) == 1) {
+                    PixelsContainer path = new PixelsContainer(maze.shortestPath(start, p, -1, cyclic));
+                    int pathLength = path.getLength();
+                    ans.setPixel(p,pathLength - 1);
+                }
+            }
+        }
+
         return ans;
+    }
+
+    public static void main() {
+        MyMap map = new MyMap(10,10,1);
+        Pixel2D p1 = new Index2D(1, 1);
+        Pixel2D p2 = new Index2D(8, 8);
+        map.drawRect(p1,p2,0);
+        Pixel2D p3 = new Index2D(0, 0);
+        Map2D maze =map.allDistance(p3,0,false);
+        System.out.println(maze.toString());
     }
 
 	////////////////////// Private Methods ///////////////////////
@@ -323,7 +426,7 @@ public class MyMap implements Map2D, Serializable{
         return ans;
     }
 
-    private Map<Pixel2D, Pixel2D> solve(Pixel2D s){
+    private Map<Pixel2D, Pixel2D> solve(Pixel2D s, Boolean cyclic) {
         int v = this.getPixel(s);
         PixelsContainer q = new PixelsContainer();
         q.enqueue(s);
@@ -339,23 +442,40 @@ public class MyMap implements Map2D, Serializable{
         visited.replace(s,true);
 
         Map<Pixel2D,Pixel2D> prev = new HashMap<>();
-        while (!q.isEmpty()){
-            Pixel2D node = q.dequeue();
-            PixelsContainer neighbours = this.checkNeighbours(node,v);
+        if (!cyclic) {
+            while (!q.isEmpty()){
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = this.checkNeighboursNotCyclic(node,v);
 
-            for (Pixel2D next : neighbours.getList()) {
-                if (!visited.get(next)) {
-                    q.enqueue(next);
-                    visited.put(next, true);
-                    prev.put(next,node);
+                for (Pixel2D next : neighbours.getList()) {
+                    if (!visited.get(next)) {
+                        q.enqueue(next);
+                        visited.put(next, true);
+                        prev.put(next,node);
+                    }
+                }
+            }
+        }
+        else {
+            while (!q.isEmpty()){
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = this.checkNeighboursCyclic(node,v);
+
+                for (Pixel2D next : neighbours.getList()) {
+                    if (!visited.get(next)) {
+                        q.enqueue(next);
+                        visited.put(next, true);
+                        prev.put(next,node);
+                    }
                 }
             }
         }
 
+
         return prev;
     }
 
-    private PixelsContainer checkNeighbours(Pixel2D node, int v) {
+    private PixelsContainer checkNeighboursNotCyclic(Pixel2D node, int v) {
         PixelsContainer neighbours = new PixelsContainer();
 
         // Right
@@ -379,6 +499,48 @@ public class MyMap implements Map2D, Serializable{
         // Down
         Pixel2D dNode = new Index2D (node.getX(),node.getY()-1);
         if (this.isInside(dNode) && this.getPixel(dNode) == v) {
+            neighbours.enqueue(dNode);
+        }
+
+        return neighbours;
+    }
+
+    private PixelsContainer checkNeighboursCyclic(Pixel2D node, int v) {
+        PixelsContainer neighbours = new PixelsContainer();
+
+        // Right
+        Pixel2D rNode = new Index2D (node.getX()+1,node.getY());
+        if (node.getX() == this.getWidth()-1) {
+            rNode = new Index2D (0,node.getY());
+        }
+        if (this.getPixel(rNode) == v) {
+            neighbours.enqueue(rNode);
+        }
+
+        // Left
+        Pixel2D lNode = new Index2D (node.getX()-1,node.getY());
+        if (node.getX() == 0) {
+            lNode = new Index2D (this.getWidth()-1,node.getY());
+        }
+        if (this.getPixel(lNode) == v) {
+            neighbours.enqueue(lNode);
+        }
+
+        // Up
+        Pixel2D uNode = new Index2D (node.getX(),node.getY()+1);
+        if (node.getY() == 0) {
+            uNode = new Index2D (node.getX(),this.getHeight()-1);
+        }
+        if (this.getPixel(uNode) == v) {
+            neighbours.enqueue(uNode);
+        }
+
+        // Down
+        Pixel2D dNode = new Index2D (node.getX(),node.getY()-1);
+        if (node.getY() == this.getHeight()-1) {
+            dNode = new Index2D (node.getX(),0);
+        }
+        if (this.getPixel(dNode) == v) {
             neighbours.enqueue(dNode);
         }
 

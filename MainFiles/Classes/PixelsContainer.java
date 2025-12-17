@@ -14,6 +14,8 @@ public class PixelsContainer {
 
     public Pixel2D[] getList() {return LIST;}
 
+    public int getLength() {return this.LIST.length;}
+
     public void enqueue(Pixel2D p) {
         Pixel2D[] tempList = new Pixel2D[this.LIST.length];
         System.arraycopy(this.LIST, 0, tempList, 0, this.LIST.length);
