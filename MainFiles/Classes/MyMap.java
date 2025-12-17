@@ -321,26 +321,7 @@ public class MyMap implements Map2D, Serializable{
         return ans;
     }
 
-    public static void main() {
-        MyMap map = new MyMap(10,10,1);
-        Pixel2D p1 = new Index2D(1, 1);
-        Pixel2D p2 = new Index2D(8, 8);
-        map.drawRect(p1,p2,0);
-        Pixel2D p3 = new Index2D(0, 0);
-        Map2D maze = map.allDistance(p3,0,false);
-        System.out.println(maze.toString());
-    }
-
-	////////////////////// Private Methods ///////////////////////
-
-    private void copy(int[][] ans, int w, int h) {
-        this.MAP = new int[h][w];
-        for (int i = 0; i < ans.length; i+=1) {
-            MAP[i] = new int[ans[i].length];
-            System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
-        }
-    }
-
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < this.H; y+=1) {
@@ -364,6 +345,17 @@ public class MyMap implements Map2D, Serializable{
             }
         }
         return new MyMap(m);
+    }
+
+
+    ////////////////////// Private Methods ///////////////////////
+
+    private void copy(int[][] ans, int w, int h) {
+        this.MAP = new int[h][w];
+        for (int i = 0; i < ans.length; i+=1) {
+            MAP[i] = new int[ans[i].length];
+            System.arraycopy(ans[i], 0, MAP[i], 0, ans[i].length);
+        }
     }
 
     private Map<Pixel2D, Pixel2D> solve(Pixel2D s, Boolean cyclic) {
@@ -415,7 +407,7 @@ public class MyMap implements Map2D, Serializable{
         return prev;
     }
 
-    private PixelsContainer checkNeighboursNotCyclic(Pixel2D node, int v) {
+    public PixelsContainer checkNeighboursNotCyclic(Pixel2D node, int v) {
         PixelsContainer neighbours = new PixelsContainer();
 
         // Right

@@ -1,12 +1,17 @@
 package assignments.Ex2.MainFiles.GUI;
 
+import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 import assignments.Ex2.MainFiles.Classes.MyMap;
+import assignments.Ex2.MainFiles.Classes.PixelsContainer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Intro2CS_2026A
@@ -19,7 +24,7 @@ import java.nio.file.Paths;
  */
 public class Ex2_GUI {
     public static void drawMap(Map2D map) {
-        StdDraw.setCanvasSize(500,500);
+        StdDraw.setCanvasSize(1000,1000);
         StdDraw.setXscale(0,map.getWidth());
         StdDraw.setYscale(0,map.getHeight());
         StdDraw.clear(StdDraw.WHITE);
@@ -68,8 +73,9 @@ public class Ex2_GUI {
     }
 
     public static void main(String[] a) {
-        String mapFile = "map.txt";
-        Map2D map = loadMap(mapFile);
+        Map2D map = new MyMap(10);
+        Pixel2D start = new Index2D(0, 0);
+        map = mazeGen(10,start);
         drawMap(map);
     }
     /// ///////////// Private functions ///////////////
@@ -86,5 +92,60 @@ public class Ex2_GUI {
 
     private static boolean checkTxt(String fileName) {
         return fileName.toLowerCase().endsWith(".txt");
+    }
+
+    public static Map2D mazeGen(int size, Pixel2D start){
+        int obsColor = 1;
+        MyMap mazeMap = new MyMap(size);
+
+        // setting up the maze grid
+        int mazeSize = ((size * 2) + 1);
+        Map2D maze = new MyMap(mazeSize);
+        for (int y = 0; y < maze.getHeight(); y+=1) {
+            for (int x = 0; x < maze.getWidth(); x+=1) {
+                if (!(x % 2 != 0 && y % 2 != 0)) {
+                    maze.setPixel(x,y,obsColor);
+                }
+            }
+        }
+
+        // creating the maze
+        {
+            PixelsContainer q = new PixelsContainer();
+            q.enqueue(start);
+            int visitedColor = -1;
+            int unVisitedColor = 0;
+            mazeMap.setPixel(start, visitedColor);
+            while (!q.isEmpty()) {
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = mazeMap.checkNeighboursNotCyclic(node, unVisitedColor);
+                if (!neighbours.isEmpty()) {
+                    for (int i = 0; i < neighbours.getLength(); i += 1) {
+                        int randomNeighbour = (int) ((Math.random() * neighbours.getLength()));
+                        Pixel2D neighbour = neighbours.dequeue(randomNeighbour);
+                        q.enqueue(neighbour);
+                        mazeMap.setPixel(neighbour, visitedColor);
+                        int x = ((node.getX() * 2) + 1) + (neighbour.getX() - node.getX());
+                        int y = ((node.getY() * 2) + 1) + (neighbour.getY() - node.getY());
+                        maze.setPixel(x, y, 0);
+                    }
+                }
+            }
+        }
+
+        // making every un reachable pixel int an obstetrical
+        start = new Index2D(1, 1);
+        maze.fill(start,3,false);
+        for (int y = 0; y < maze.getHeight(); y+=1) {
+            for (int x = 0; x < maze.getWidth(); x+=1) {
+                if (maze.getPixel(x,y) != 3) {
+                    maze.setPixel(x,y,1);
+                }
+            }
+        }
+
+        maze.fill(start,0,false);
+
+        return maze;
     }
 }
