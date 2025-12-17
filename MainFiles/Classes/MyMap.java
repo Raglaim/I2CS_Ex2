@@ -375,7 +375,7 @@ public class MyMap implements Map2D, Serializable{
         Pixel2D p2 = new Index2D(8, 8);
         map.drawRect(p1,p2,0);
         Pixel2D p3 = new Index2D(0, 0);
-        Map2D maze =map.allDistance(p3,0,false);
+        Map2D maze = map.allDistance(p3,0,false);
         System.out.println(maze.toString());
     }
 
@@ -412,18 +412,6 @@ public class MyMap implements Map2D, Serializable{
             }
         }
         return new MyMap(m);
-    }
-
-    private int count(int v){
-        int ans = 0;
-        for (int y = 0; y < this.H; y+=1) {
-            for (int x = 0; x < this.W; x+=1) {
-                if (getPixel(x, y) == v){
-                    ans += 1;
-                }
-            }
-        }
-        return ans;
     }
 
     private Map<Pixel2D, Pixel2D> solve(Pixel2D s, Boolean cyclic) {
