@@ -3,7 +3,6 @@ import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -272,31 +271,8 @@ public class MyMap implements Map2D, Serializable{
 	public Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) {
         Pixel2D[] ans = null;  // the result.
 
-        // making a copy for the maze
-        Map2D maze = new MyMap(getMap());
+        Map2D maze = this.preppingMaze(obsColor);
 
-        // setting obsColor to -1
-        if (obsColor != -1) {
-            for (int y = 0; y < this.getHeight(); y+=1) {
-                for (int x = 0; x < this.getWidth(); x+=1) {
-                    Pixel2D p = new Index2D(x,y);
-                    if (maze.getPixel(p) == obsColor) {
-                        maze.setPixel(p,-1);
-                    }
-                }
-            }
-            obsColor = -1;
-        }
-
-        // setting every else pixel to 0
-        for (int y = 0; y < this.getHeight(); y+=1) {
-            for (int x = 0; x < this.getWidth(); x+=1) {
-                Pixel2D p = new Index2D(x,y);
-                if (maze.getPixel(p) != obsColor) {
-                    maze.setPixel(p,0);
-                }
-            }
-        }
         // checking if there is a way to get from s pixel to e pixel
         maze.fill(start,1,cyclic);
         if (maze.getPixel(end) != 1) {return null;}
@@ -314,31 +290,7 @@ public class MyMap implements Map2D, Serializable{
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
         Map2D ans = null;  // the result.
 
-        // making a copy for the maze
-        Map2D maze = new MyMap(getMap());
-
-        // setting obsColor to -1
-        if (obsColor != -1) {
-            for (int y = 0; y < this.getHeight(); y+=1) {
-                for (int x = 0; x < this.getWidth(); x+=1) {
-                    Pixel2D p = new Index2D(x,y);
-                    if (maze.getPixel(p) == obsColor) {
-                        maze.setPixel(p,-1);
-                    }
-                }
-            }
-            obsColor = -1;
-        }
-
-        // setting every else pixel to 0
-        for (int y = 0; y < this.getHeight(); y+=1) {
-            for (int x = 0; x < this.getWidth(); x+=1) {
-                Pixel2D p = new Index2D(x,y);
-                if (maze.getPixel(p) != obsColor) {
-                    maze.setPixel(p,0);
-                }
-            }
-        }
+        Map2D maze = this.preppingMaze(obsColor);
 
         // setting every reachable pixel to 1
         maze.fill(start,1,cyclic);
@@ -544,5 +496,34 @@ public class MyMap implements Map2D, Serializable{
         path.reverse();
 
         return path;
+    }
+
+    private Map2D preppingMaze(int obsColor){
+        // making a copy for the maze
+        Map2D maze = new MyMap(getMap());
+
+        // setting obsColor to -1
+        if (obsColor != -1) {
+            for (int y = 0; y < this.getHeight(); y+=1) {
+                for (int x = 0; x < this.getWidth(); x+=1) {
+                    Pixel2D p = new Index2D(x,y);
+                    if (maze.getPixel(p) == obsColor) {
+                        maze.setPixel(p,-1);
+                    }
+                }
+            }
+            obsColor = -1;
+        }
+
+        // setting every else pixel to 0
+        for (int y = 0; y < this.getHeight(); y+=1) {
+            for (int x = 0; x < this.getWidth(); x+=1) {
+                Pixel2D p = new Index2D(x,y);
+                if (maze.getPixel(p) != obsColor) {
+                    maze.setPixel(p,0);
+                }
+            }
+        }
+        return maze;
     }
 }
