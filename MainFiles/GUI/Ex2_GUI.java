@@ -10,8 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Intro2CS_2026A
@@ -32,7 +31,7 @@ public class Ex2_GUI {
             for (int x = 0; x < map.getWidth(); x++) {
                 if (!(map.getPixel(x, y) == 0)) {
                     setColor(map.getPixel(x,y));
-                    StdDraw.filledSquare(x+0.5,y+0.5,0.5);
+                    StdDraw.filledSquare(x+0.5,y+0.5,0.502);
                 }
             }
         }
@@ -73,10 +72,22 @@ public class Ex2_GUI {
     }
 
     public static void main(String[] a) {
-        Map2D map = new MyMap(10);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Doing some work...");
         Pixel2D start = new Index2D(0, 0);
-        map = mazeGen(10,start);
-        drawMap(map);
+        Map2D maze = mazeGen(10,start);
+        drawMap(maze);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
+        System.out.println("Continuing...");
+        start = new Index2D(1, 1);
+        Pixel2D end = new Index2D(maze.getWidth()-2,maze.getHeight()-2);
+        Pixel2D[] path = maze.shortestPath(start,end,1,false);
+        System.out.println(path.length-1);
+        for (Pixel2D p : path) {
+            maze.setPixel(p,3);
+        }
+        drawMap(maze);
     }
     /// ///////////// Private functions ///////////////
 
@@ -146,6 +157,7 @@ public class Ex2_GUI {
 
         maze.fill(start,0,false);
 
-        return maze;
+        if (maze.getPixel(1,1) == 1 || maze.getPixel(maze.getWidth()-2,maze.getHeight()-2) == 1) {return mazeGen(size,start);}
+        else {return maze;}
     }
 }

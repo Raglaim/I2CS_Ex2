@@ -43,22 +43,6 @@ public class PixelsContainer {
         return p;
     }
 
-    public static void main() {
-        PixelsContainer pc = new PixelsContainer();
-        Pixel2D p1 = new Index2D(1,1);
-        Pixel2D p2 = new Index2D(2,2);
-        Pixel2D p3 = new Index2D(3,3);
-        Pixel2D p4 = new Index2D(4,4);
-        Pixel2D p5 = new Index2D(5,5);
-        pc.enqueue(p1);
-        pc.enqueue(p2);
-        pc.enqueue(p3);
-        pc.enqueue(p4);
-        pc.enqueue(p5);
-        System.out.println(pc.dequeue(2));
-        System.out.println(pc.toString());
-    }
-
     public Boolean isEmpty() {return this.LIST.length == 0;}
 
     public void reverse(){
