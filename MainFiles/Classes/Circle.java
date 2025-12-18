@@ -71,7 +71,7 @@ public class Circle implements assignments.Ex2.MainFiles.Classes.Interfaces.Circ
     }
 
     public boolean contains(Pixel2D p) {
-        return this.getCenter().distance2D(p) <= this.getRadius();
+        return this.getCenter().distance2D(p) < this.getRadius();
     }
 
     public String toString() {

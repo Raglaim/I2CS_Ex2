@@ -5,6 +5,7 @@ import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 import assignments.Ex2.MainFiles.Classes.MyMap;
 import assignments.Ex2.MainFiles.Classes.PixelsContainer;
+import assignments.Ex2.MainFiles.Classes.StdDraw;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,12 +24,12 @@ import java.util.Scanner;
  */
 public class Ex2_GUI {
     public static void drawMap(Map2D map) {
-        StdDraw.setCanvasSize(1000,1000);
+        StdDraw.setCanvasSize(500,500);
         StdDraw.setXscale(0,map.getWidth());
         StdDraw.setYscale(0,map.getHeight());
         StdDraw.clear(StdDraw.WHITE);
         for (int y = 0; y < map.getHeight(); y+=1) {
-            for (int x = 0; x < map.getWidth(); x++) {
+            for (int x = 0; x < map.getWidth(); x+=1) {
                 if (!(map.getPixel(x, y) == 0)) {
                     setColor(map.getPixel(x,y));
                     StdDraw.filledSquare(x+0.5,y+0.5,0.502);
@@ -43,7 +44,7 @@ public class Ex2_GUI {
      */
     public static MyMap loadMap(String mapFileName) {
         if (checkTxt(mapFileName)) {
-            Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
+            Path targetDir = Paths.get("C:\\Users\\Elad Nagar\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
             Path path = targetDir.resolve(mapFileName);
             String content = "";
             try {
@@ -62,7 +63,7 @@ public class Ex2_GUI {
      * @param mapFileName
      */
     public static void saveMap(Map2D map, String mapFileName) {
-        Path targetDir = Paths.get("C:\\Users\\User\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
+        Path targetDir = Paths.get("C:\\Users\\Elad Nagar\\IdeaProjects\\I2CS_Ex2\\MainFiles\\GUI\\SavedMaps");
         Path path = targetDir.resolve(mapFileName);
         String content = map.toString();
         try {
@@ -75,7 +76,7 @@ public class Ex2_GUI {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Doing some work...");
         Pixel2D start = new Index2D(0, 0);
-        Map2D maze = mazeGen(10,start);
+        Map2D maze = mazeGen(20,start);
         drawMap(maze);
         System.out.println("Press Enter to continue...");
         scanner.nextLine();

@@ -69,9 +69,6 @@ public class MyMap implements Map2D, Serializable{
         if (arr == null || arr.length == 0) {
             throw new RuntimeException("Null or empty array");
         }
-        if (arr.length != arr[0].length) {
-            throw new RuntimeException("Non square array");
-        }
         for (int i = 0; i < arr.length; i+=1) {
             if (arr[i].length != arr[0].length) {
                 throw new RuntimeException("Ragged array");
