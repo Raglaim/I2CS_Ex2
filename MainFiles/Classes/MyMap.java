@@ -327,11 +327,14 @@ public class MyMap implements Map2D, Serializable{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int y = 0; y < this.H; y+=1) {
+        for (int y = 0; y < this.H-1; y+=1) {
             for (int x = 0; x < this.W; x+=1) {
                 sb.append(this.MAP[y][x]).append(' ');
             }
             sb.append('\n');
+        }
+        for (int x = 0; x < this.W; x+=1) {
+            sb.append(this.MAP[this.H-1][x]).append(' ');
         }
         return sb.toString();
     }
@@ -339,6 +342,7 @@ public class MyMap implements Map2D, Serializable{
     public static MyMap mapFromString(String mapS) {
         String[] rows = mapS.split("\n");
         int h = rows.length;
+        rows[0] = rows[0].trim();
         int w = rows[0].replace(" ", "").length();
         int[][] m = new int[h][w];
         for (int y = 0; y < h; y++) {
