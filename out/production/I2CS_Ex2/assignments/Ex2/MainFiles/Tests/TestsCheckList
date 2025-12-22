@@ -1,19 +1,55 @@
-map = V
-init = V
-getMap = V
-getWidth = V
-getHeight = V
-getPixel = V
-setPixel = V
-isInside = V
-sameDimensions = V
-addMap2D = V
-mul = V
-rescale = V
-drawCircle = X
-drawLine = X
-drawRect = X
-equals = X
-fill = X
-shortestPath = X
-allDistance = X
+Tets for class: Map2D
+==================================================
+
+Constructors:
+--------------------------------------------------
+MyMap() = V
+MyMap(int w, int h, int v) = V
+MyMap(int size) = V
+MyMap(int[][] data) = V
+
+
+
+Initialization & Properties:
+--------------------------------------------------
+void init(int w, int h, int v) = V
+void init(int[][] arr) = V
+int[][] getMap() = V
+int getWidth() = V
+int getHeight() = V
+boolean isInside(Pixel2D p) = V
+boolean sameDimensions(Map2D p) = V
+
+
+
+Getters & Setters:
+--------------------------------------------------
+int getPixel(int x, int y) = V
+int getPixel(Pixel2D p) = V
+void setPixel(int x, int y, int v) = V
+void setPixel(Pixel2D p, int v) = V
+
+
+
+Math & Transformations:
+--------------------------------------------------
+void addMap2D(Map2D p) = V
+void mul(double scalar) = V
+void rescale(double sx, double sy) = V
+boolean equals(Object ob) = V
+
+
+
+Drawing Shapes:
+--------------------------------------------------
+void drawCircle(Pixel2D center, double rad, int color) = V
+void drawLine(Pixel2D p1, Pixel2D p2, int color) = X
+void drawRect(Pixel2D p1, Pixel2D p2, int color) = X
+
+
+
+Algorithms (BFS & Fill):
+--------------------------------------------------
+int fill(Pixel2D start, int new_v, boolean cyclic) = X
+Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) = X
+Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) = X

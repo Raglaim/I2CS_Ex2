@@ -160,9 +160,12 @@ public class MyMap implements Map2D, Serializable{
             int dx = Math.abs(p2.getX() - p1.getX());
             int dy = Math.abs(p2.getY() - p1.getY());
             double m = (double) dy /dx; // slope
-            // 1
+            // 1. if p1 equals p2 - a single pixel will be drawn.
             if (p1.equals(p2)) {this.setPixel(p1, color);}
-            // 2
+            // 2. assuming dx>=dy & p1.x<p2.x: dx+1 pixels will be drawn.
+            // let f(x) be the linear function going throw p1&p2.
+            // let x=p1.x, p1.x+1, p1.x+2...p1.x+dx (=p2.x)
+            // all the pixels (x,round(f(x)) will be drawn.
             if (dx >= dy && p1.getX() < p2.getX()) {
                 for (int i = 0; i <= dx; i+=1) {
                     int x = p1.getX() + i;
@@ -170,17 +173,20 @@ public class MyMap implements Map2D, Serializable{
                     this.setPixel(x-1, fx-1, color);
                 }
             }
-            // 3
+            // 3. assuming dx>=dy & p1.x>p2.x: the line p2,p1 will be drawn.
             if (dx >= dy && p1.getX() > p2.getX()) {drawLine(p2, p1, color);}
-            // 4
+            // 4. assuming dx < dy & p1.y < p2.y: dy+1 pixels will be drawn.
+            // let g(y) be the linear function going throw p1&p2.
+            // let y=p1.y, p1.y+1, p1.y+2...p1.y+dy (=p2.y)
+            // all the pixels (y,round(g(y)) will be drawn.
             if (dy > dx && p1.getY() < p2.getY()) {
-                for (int i = 0; i <= dy; i+=1) {
+                for (int i = 1; i <= dy+1; i+=1) {
                     int y = p1.getY() + i;
                     int gy = (int) (((y - p1.getY()) / m) + p1.getX());
-                    this.setPixel(gy-1, y-1, color);
+                    this.setPixel(gy, y-1, color);
                 }
             }
-            // 5
+            // 5. assuming dy>dx & p1.y>p2.y: the line p2,p1 will be drawn.
             if (dy > dx && p1.getY() > p2.getY()) {drawLine(p2, p1, color);}
         }
 
@@ -457,7 +463,7 @@ public class MyMap implements Map2D, Serializable{
 
         // Up
         Pixel2D uNode = new Index2D (node.getX(),node.getY()+1);
-        if (node.getY() == 0) {
+        if (node.getY() == this.getHeight()-1) {
             uNode = new Index2D (node.getX(),this.getHeight()-1);
         }
         if (this.getPixel(uNode) == v) {
@@ -466,7 +472,7 @@ public class MyMap implements Map2D, Serializable{
 
         // Down
         Pixel2D dNode = new Index2D (node.getX(),node.getY()-1);
-        if (node.getY() == this.getHeight()-1) {
+        if (node.getY() == 0) {
             dNode = new Index2D (node.getX(),0);
         }
         if (this.getPixel(dNode) == v) {
