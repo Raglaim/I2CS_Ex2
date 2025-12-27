@@ -2,6 +2,7 @@ package assignments.Ex2.MainFiles.Classes;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

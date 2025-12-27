@@ -1,7 +1,10 @@
 package assignments.Ex2.MainFiles.GUI;
 
+import assignments.Ex2.MainFiles.Classes.Index2D;
 import assignments.Ex2.MainFiles.Classes.Interfaces.Map2D;
+import assignments.Ex2.MainFiles.Classes.Interfaces.Pixel2D;
 import assignments.Ex2.MainFiles.Classes.MyMap;
+import assignments.Ex2.MainFiles.Classes.PixelsContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,28 +40,22 @@ public class Ex2_GUI {
      * @param map the Map2D object to visualize
      */
     public static void drawMap(Map2D map) {
-        JFrame frame = new JFrame();
-        frame.setTitle("Map GUI");
+        JFrame frame = new JFrame("Map GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,500);
         frame.setResizable(false);
-        frame.setLayout(new GridLayout(map.getWidth(), map.getHeight()));
-
-        for (int y = 0; y < map.getHeight(); y++) {
-            for (int x = 0; x < map.getWidth(); x++) {
+        JPanel mapPanel = new JPanel();
+        mapPanel.setPreferredSize(new Dimension(500, 500));
+        mapPanel.setLayout(new GridLayout(map.getHeight(), map.getWidth()));
+        for (int y = 0; y < map.getHeight(); y+=1) {
+            for (int x = 0; x < map.getWidth(); x+=1) {
                 JPanel cell = new JPanel();
-                int val = map.getPixel(x, y);
-                switch (val) {
-                    case 0 -> cell.setBackground(Color.white);
-                    case 1 -> cell.setBackground(Color.black);
-                    case 2 -> cell.setBackground(Color.red);
-                    case 3 -> cell.setBackground(Color.green);
-                    case 4 -> cell.setBackground(Color.blue);
-                    default -> cell.setBackground(Color.gray);
-                }
-                frame.add(cell);
+                cell.setBackground(getColor(map.getPixel(x,y)));
+                mapPanel.add(cell);
             }
         }
+        frame.add(mapPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -125,7 +122,73 @@ public class Ex2_GUI {
      * @param fileName the name of the file to check
      * @return true if the filename ends with .txt (case-insensitive), false otherwise
      */
-    private static boolean checkTxt(String fileName) {
-        return fileName.toLowerCase().endsWith(".txt");
+    private static boolean checkTxt(String fileName) {return fileName.toLowerCase().endsWith(".txt");}
+
+
+    public static MyMap mazeGen(int size, Pixel2D start){
+        int obsColor = 1;
+        MyMap mazeMap = new MyMap(size);
+
+        // setting up the maze grid
+        int mazeSize = ((size * 2) + 1);
+        MyMap maze = new MyMap(mazeSize);
+        for (int y = 0; y < maze.getHeight(); y+=1) {
+            for (int x = 0; x < maze.getWidth(); x+=1) {
+                if (!(x % 2 != 0 && y % 2 != 0)) {
+                    maze.setPixel(x,y,obsColor);
+                }
+            }
+        }
+
+        // creating the maze
+        {
+            PixelsContainer q = new PixelsContainer();
+            q.enqueue(start);
+            int visitedColor = -1;
+            int unVisitedColor = 0;
+            mazeMap.setPixel(start, visitedColor);
+            while (!q.isEmpty()) {
+                Pixel2D node = q.dequeue();
+                PixelsContainer neighbours = mazeMap.checkNeighboursNotCyclic(node, unVisitedColor);
+                if (!neighbours.isEmpty()) {
+                    for (int i = 0; i < neighbours.getLength(); i += 1) {
+                        int randomNeighbour = (int) ((Math.random() * neighbours.getLength()));
+                        Pixel2D neighbour = neighbours.dequeue(randomNeighbour);
+                        q.enqueue(neighbour);
+                        mazeMap.setPixel(neighbour, visitedColor);
+                        int x = ((node.getX() * 2) + 1) + (neighbour.getX() - node.getX());
+                        int y = ((node.getY() * 2) + 1) + (neighbour.getY() - node.getY());
+                        maze.setPixel(x, y, 0);
+                    }
+                }
+            }
+        }
+
+        // making every un reachable pixel int an obstetrical
+        start = new Index2D(1, 1);
+        maze.fill(start,3,false);
+        for (int y = 0; y < maze.getHeight(); y+=1) {
+            for (int x = 0; x < maze.getWidth(); x+=1) {
+                if (maze.getPixel(x,y) != 3) {
+                    maze.setPixel(x,y,1);
+                }
+            }
+        }
+
+        maze.fill(start,0,false);
+
+        if (maze.getPixel(1,1) == 1 || maze.getPixel(maze.getWidth()-2,maze.getHeight()-2) == 1) {return mazeGen(size,start);}
+        else {return maze;}
+    }
+
+    public static Color getColor(int v) {
+        return switch (v) {
+            case 0 -> Color.white;
+            case 1 -> Color.black;
+            case 2 -> Color.red;
+            case 3 -> Color.green;
+            case 4 -> Color.blue;
+            default -> null;
+        };
     }
 }

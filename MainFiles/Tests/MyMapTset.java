@@ -179,7 +179,7 @@ public class MyMapTset {
         assertEquals(m1, m2);
         Pixel2D p1 = new Index2D(0,0);
         m1.setPixel(p1,1);
-        assertTrue(!m1.equals(m2));
+        assertNotEquals(m1, m2);
     }
 
     @Test
