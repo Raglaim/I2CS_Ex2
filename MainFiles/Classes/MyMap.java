@@ -20,6 +20,10 @@ public class MyMap implements Map2D, Serializable{
     private static final int DEFAULT_W = 10;
     private static final int DEFAULT_H = 10;
     private static final int DEFAULT_V = 0;
+
+    /**
+     * Default constructor. Creates a map with default dimensions (10x10) and a default value of 0.
+     */
     public MyMap() {
         init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
     }
@@ -27,23 +31,25 @@ public class MyMap implements Map2D, Serializable{
     private int W = 0;
     private int H = 0;
     private int[][] MAP = new int[W][H];
-	/**
-	 * Constructs a w*h 2D raster map with an init value v.
-	 * @param w
-	 * @param h
-	 * @param v
-	 */
+
+    /**
+     * Creates a new map with specific width (w), height (h), and fills every pixel with the initial value (v).
+     * @param w width
+     * @param h height
+     * @param v initial value
+     */
 	public MyMap(int w, int h, int v) {init(w, h, v);}
-	/**
-	 * Constructs a square map (size*size).
-	 * @param size
-	 */
+
+    /**
+     * Creates a square map where both width and height equal size.
+     * @param size width and height
+     */
 	public MyMap(int size) {this(size,size, 0);}
-	
-	/**
-	 * Constructs a map from a given 2D array.
-	 * @param data
-	 */
+
+    /**
+     * Constructs a map from a given 2D array. If the input array is null, it creates a default map instead.
+     * @param data source 2D array
+     */
 	public MyMap(int[][] data) {
         if (data == null) {
             init(DEFAULT_W, DEFAULT_H, DEFAULT_V);
@@ -51,9 +57,13 @@ public class MyMap implements Map2D, Serializable{
         }
         init(data);
 	}
+
+    /**
+     * Re-initializes the current map. It updates the width and height, creates a new internal 2D array, and sets every cell to the value v.
+     */
 	@Override
 	public void init(int w, int h, int v) {
-        int [][] ans = null;
+        int [][] ans;
         W = w;
         H = h;
         ans = new int[h][w];
@@ -64,14 +74,19 @@ public class MyMap implements Map2D, Serializable{
         }
         copy(ans, w, h);
     }
+
+    /**
+     * Re-initializes the map using a provided 2D array. It checks for errors (null or "ragged" arrays), calculates new dimensions,
+     * and creates a "deep copy" of the data so changes to the original array won't affect the map later.
+     */
 	@Override
 	public void init(int[][] arr) {
-        int [][] ans = null;
+        int [][] ans;
         if (arr == null || arr.length == 0) {
             throw new RuntimeException("Null or empty array");
         }
-        for (int i = 0; i < arr.length; i+=1) {
-            if (arr[i].length != arr[0].length) {
+        for (int[] row : arr) {
+            if (row.length != arr[0].length) {
                 throw new RuntimeException("Ragged array");
             }
         }
@@ -86,27 +101,64 @@ public class MyMap implements Map2D, Serializable{
         copy(ans, w, h);
     }
 
+    /**
+     * Returns a reference to the raw underlying 2D integer array (MAP).
+     */
     @Override
 	public int[][] getMap() {return this.MAP;}
+
+    /**
+     * Returns the width (number of columns) of the map.
+     */
 	@Override
 	public int getWidth() {return this.W;}
+
+    /**
+     * Returns the height (number of rows) of the map.
+     */
 	@Override
 	public int getHeight() {return this.H;}
+
+    /**
+     * Returns the integer color/value of the specific pixel at coordinates (x, y).
+     */
 	@Override
 	public int getPixel(int x, int y) {return this.MAP[y][x];}
+
+    /**
+     * A wrapper for getPixel(x, y); gets the value using a Pixel2D object instead of separate x/y integers.
+     */
 	@Override
 	public int getPixel(Pixel2D p) {return this.getPixel(p.getX(), p.getY());}
+
+    /**
+     * Sets the value (color) of the pixel at coordinates (x, y) to v.
+     */
 	@Override
 	public void setPixel(int x, int y, int v) {this.MAP[y][x] = v;}
+
+    /**
+     * A wrapper for setPixel(x, y, v); sets the pixel value using a Pixel2D object.
+     */
 	@Override
 	public void setPixel(Pixel2D p, int v) {this.MAP[p.getY()][p.getX()] = v;}
 
+    /**
+     * Checks if a given point p is within the valid boundaries of the map (i.e., x is between 0 and width, y is between 0 and height).
+     * Returns true if valid, false otherwise.
+     */
     @Override
     public boolean isInside(Pixel2D p) {return p.getX() >= 0 && p.getX() < this.W && p.getY() >= 0 && p.getY() < this.H;}
 
+    /**
+     * Checks if the current map has the exact same width and height as another map p.
+     */
     @Override
     public boolean sameDimensions(Map2D p) {return this.W == p.getWidth() && this.H == p.getHeight();}
 
+    /**
+     * Adds the values of another map p to the current map, pixel by pixel. This only happens if both maps have the same dimensions.
+     */
     @Override
     public void addMap2D(Map2D p) {
         if (this.sameDimensions(p)){
@@ -118,6 +170,9 @@ public class MyMap implements Map2D, Serializable{
         }
     }
 
+    /**
+     * Multiplies every pixel's value in the map by a given number (scalar).
+     */
     @Override
     public void mul(double scalar) {
         for (int y = 0; y < this.H; y+=1) {
@@ -127,6 +182,10 @@ public class MyMap implements Map2D, Serializable{
         }
     }
 
+    /**
+     * Resizes the map based on scaling factors sx (width scale) and sy (height scale).
+     * It creates a new larger or smaller grid and uses nearest-neighbor logic to map pixels from the old grid to the new one.
+     */
     @Override
     public void rescale(double sx, double sy) {
         int newW = (int)(this.W * sx);
@@ -144,6 +203,10 @@ public class MyMap implements Map2D, Serializable{
         this.MAP = newMAP;
     }
 
+    /**
+     * Draws a filled circle of a specific color defined by a center point and a radius rad.
+     * It iterates through the grid and checks which pixels fall inside the mathematical definition of the circle.
+     */
     @Override
     public void drawCircle(Pixel2D center, double rad, int color) {
         Circle c = new Circle(center, rad);
@@ -155,6 +218,10 @@ public class MyMap implements Map2D, Serializable{
         }
     }
 
+    /**
+     * Draws a straight line between point p1 and p2 in the given color.
+     * It calculates the slope (m) and handles different cases (vertical, horizontal, steep slopes) to ensure the line is continuous.
+     */
     @Override
     public void drawLine(Pixel2D p1, Pixel2D p2, int color) {
         if (this.isInside(p1) && this.isInside(p2)) {
@@ -193,6 +260,10 @@ public class MyMap implements Map2D, Serializable{
 
     }
 
+    /**
+     * Draws a filled rectangle defined by two opposite corners p1 and p2.
+     * It calculates the min/max x and y bounds and fills every pixel within that box.
+     */
     @Override
     public void drawRect(Pixel2D p1, Pixel2D p2, int color) {
         if (this.isInside(p1) && this.isInside(p2)) {
@@ -208,6 +279,9 @@ public class MyMap implements Map2D, Serializable{
         }
     }
 
+    /**
+     * Overrides the default object comparison. It checks if two maps are identical by comparing their dimensions and then checking every single pixel value.
+     */
     @Override
     public boolean equals(Object ob) {
         if (!(ob instanceof Map2D)) {return false;}
@@ -221,11 +295,12 @@ public class MyMap implements Map2D, Serializable{
             return true;
         }
     }
-	@Override
-	/** 
-	 * Fills this map with the new color (new_v) starting from p.
-	 * https://en.wikipedia.org/wiki/Flood_fill
-	 */
+    /**
+     * Implements a Flood Fill algorithm (like the "paint bucket" tool). It changes the start pixel and all connected pixels
+     * of the same original color to new_v. It returns the total number of pixels changed.
+     * <a href="https://en.wikipedia.org/wiki/Flood_fill">Wikipedia link</a>
+     */
+    @Override
 	public int fill(Pixel2D start, int new_v,  boolean cyclic) {
         int ans = 0; // making result
         int startingColor = this.getPixel(start);
@@ -267,13 +342,14 @@ public class MyMap implements Map2D, Serializable{
         return ans;
     }
 
+    /**
+     * Finds the shortest path from start to end using Breadth-First Search (BFS).
+     * It treats pixels with the value obsColor as obstacles (walls) that cannot be traversed. It returns an array of pixels representing the path.
+     * <a href="https://en.wikipedia.org/wiki/Breadth-first_search">Wikipedia link</a>
+     */
 	@Override
-	/**
-	 * BFS like shortest the computation based on iterative raster implementation of BFS, see:
-	 * https://en.wikipedia.org/wiki/Breadth-first_search
-	 */
 	public Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) {
-        Pixel2D[] ans = null;  // the result.
+        Pixel2D[] ans;  // the result.
 
         Map2D maze = this.preppingMaze(obsColor);
 
@@ -285,14 +361,18 @@ public class MyMap implements Map2D, Serializable{
         Map<Pixel2D, Pixel2D> prev = this.solve(start,cyclic);
 
         // using the dictionary to get from e pixel to s pixel
-        ans = reconstructPath(start, end, prev).getList();
+        ans = reconstructPath(end, prev).getList();
 
 		return ans;
 	}
 
+    /**
+     * Generates a "distance map". Starting from start, it calculates the distance (number of steps) to every other reachable pixel.
+     * Unreachable pixels are set to -1. Reachable pixels are set to their distance from the start point.
+     */
     @Override
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
-        Map2D ans = null;  // the result.
+        Map2D ans;  // the result.
 
         Map2D maze = this.preppingMaze(obsColor);
 
@@ -487,7 +567,7 @@ public class MyMap implements Map2D, Serializable{
         return neighbours;
     }
 
-    public PixelsContainer reconstructPath(Pixel2D s, Pixel2D e, Map<Pixel2D, Pixel2D> prev){
+    public PixelsContainer reconstructPath(Pixel2D e, Map<Pixel2D, Pixel2D> prev){
         PixelsContainer path = new PixelsContainer();
         for (Pixel2D at = e; at != null ; at = prev.get(at)) {
             path.enqueue(at);
