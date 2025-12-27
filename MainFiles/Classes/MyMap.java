@@ -56,9 +56,9 @@ public class MyMap implements Map2D, Serializable{
         W = w;
         H = h;
         ans = new int[h][w];
-        for (int i = 0; i < h; i+=1) {
-            for (int j = 0; j < w; j+=1) {
-                ans[i][j] = v;
+        for (int y = 0; y < h; y+=1) {
+            for (int x = 0; x < w; x+=1) {
+                ans[y][x] = v;
             }
         }
         copy(ans, w, h);
@@ -131,11 +131,11 @@ public class MyMap implements Map2D, Serializable{
         int newW = (int)(this.W * sx);
         int newH = (int)(this.H * sy);
         int [][] newMAP = new int[newH][newW];
-        for (int i = 0; i < newH; i+=1) {
-            for (int j = 0; j < newW; j+=1) {
-                int oldX = (int)(j / sx);
-                int oldY = (int)(i / sy);
-                newMAP[i][j] = this.MAP[oldY][oldX];
+        for (int y = 0; y < newH; y+=1) {
+            for (int x = 0; x < newW; x+=1) {
+                int oldX = (int)(x / sx);
+                int oldY = (int)(y / sy);
+                newMAP[y][x] = this.getPixel(oldX, oldY);
             }
         }
         this.W = newW;
@@ -468,7 +468,7 @@ public class MyMap implements Map2D, Serializable{
         // Up
         Pixel2D uNode = new Index2D (node.getX(),node.getY()+1);
         if (node.getY() == this.getHeight()-1) {
-            uNode = new Index2D (node.getX(),this.getHeight()-1);
+            uNode = new Index2D (node.getX(),0);
         }
         if (this.getPixel(uNode) == v) {
             neighbours.enqueue(uNode);
@@ -477,7 +477,7 @@ public class MyMap implements Map2D, Serializable{
         // Down
         Pixel2D dNode = new Index2D (node.getX(),node.getY()-1);
         if (node.getY() == 0) {
-            dNode = new Index2D (node.getX(),0);
+            dNode = new Index2D (node.getX(),this.getHeight()-1);
         }
         if (this.getPixel(dNode) == v) {
             neighbours.enqueue(dNode);

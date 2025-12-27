@@ -50,6 +50,6 @@ void drawRect(Pixel2D p1, Pixel2D p2, int color) = V
 
 Algorithms (BFS & Fill):
 --------------------------------------------------
-int fill(Pixel2D start, int new_v, boolean cyclic) = X
-Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) = X
-Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) = X
+int fill(Pixel2D start, int new_v, boolean cyclic) = V
+Pixel2D[] shortestPath(Pixel2D start, Pixel2D end, int obsColor, boolean cyclic) = V
+Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) = V

@@ -76,8 +76,10 @@ public class MyMapTset {
 
     @Test
     void testIsInsideElad() {
-        Pixel2D p1 = new Index2D(0,0);
-        assertTrue(M.isInside(p1));
+        Pixel2D p = new Index2D(0,0);
+        assertTrue(M.isInside(p));
+        p = new Index2D(10,10);
+        assertFalse(M.isInside(p));
     }
 
     @Test
@@ -148,8 +150,8 @@ public class MyMapTset {
                 {2,4},
                 {6,8}
         };
-        Map2D mR = new MyMap(mapR);
-        assertEquals(mR,m);
+        Map2D mResult = new MyMap(mapR);
+        assertEquals(mResult,m);
     }
 
     @Test
@@ -235,8 +237,81 @@ public class MyMapTset {
     }
 
     @Test
-    void testDrawElad() {
+    void testFillElad() {
+        MyMap m = new MyMap(10,10,1);
+        m.fill(new Index2D(0,0),0,false);
+        assertArrayEquals(RESULT,m.getMap());
 
+        m.drawRect(new Index2D(0,1),new Index2D(9,8),1);
+        m.fill(new Index2D(0,0),1,true);
+        assertEquals(1,m.getPixel(0, 0));
+        assertEquals(1,m.getPixel(9, 9));
+
+        m = new MyMap(10,10,0);
+        m.drawRect(new Index2D(0,1),new Index2D(9,8),1);
+        m.fill(new Index2D(0,0),1,false);
+        assertEquals(1,m.getPixel(0, 0));
+        assertEquals(0,m.getPixel(9, 9));
+    }
+
+    @Test
+    void testShortestPathElad() {
+        Pixel2D[] shortestPath = M.shortestPath(new Index2D(0,0), new Index2D(9,0),1,false);
+        Pixel2D[] result = new Pixel2D[10];
+        result[0] = new Index2D(0,0);
+        result[1] = new Index2D(1,0);
+        result[2] = new Index2D(2,0);
+        result[3] = new Index2D(3,0);
+        result[4] = new Index2D(4,0);
+        result[5] = new Index2D(5,0);
+        result[6] = new Index2D(6,0);
+        result[7] = new Index2D(7,0);
+        result[8] = new Index2D(8,0);
+        result[9] = new Index2D(9,0);
+        assertArrayEquals(result,shortestPath);
+
+        M.setPixel(new Index2D(0,0),1);
+        M.setPixel(new Index2D(9,0),1);
+        M.setPixel(new Index2D(9,9),1);
+        shortestPath = M.shortestPath(new Index2D(0,0), new Index2D(9,9),0,true);
+        result = new Pixel2D[3];
+        result[0] = new Index2D(0,0);
+        result[1] = new Index2D(9,0);
+        result[2] = new Index2D(9,9);
+        assertArrayEquals(result,shortestPath);
+    }
+
+    @Test
+    void testAllDistanceElad() {
+        Map2D m = new MyMap(5,5,0);
+        m.setPixel(new Index2D(0,0),1);
+        m.setPixel(new Index2D(4,0),1);
+        m.setPixel(new Index2D(0,4),1);
+        m.setPixel(new Index2D(4,4),1);
+        m = m.allDistance(new Index2D(1,1),1,false);
+        int[][] result = new int[][] {
+                {-1,1,2,3,-1},
+                {1,0,1,2,3},
+                {2,1,2,3,4},
+                {3,2,3,4,5},
+                {-1,3,4,5,-1}
+        };
+        assertArrayEquals(result,m.getMap());
+
+        m = new MyMap(5,5,0);
+        m.setPixel(new Index2D(0,0),1);
+        m.setPixel(new Index2D(4,0),1);
+        m.setPixel(new Index2D(0,4),1);
+        m.setPixel(new Index2D(4,4),1);
+        m = m.allDistance(new Index2D(1,1),1,true);
+        result = new int[][] {
+                {-1,1,2,3,-1},
+                {1,0,1,2,2},
+                {2,1,2,3,3},
+                {3,2,3,4,4},
+                {-1,2,3,4,-1}
+        };
+        assertArrayEquals(result,m.getMap());
     }
 }
 
