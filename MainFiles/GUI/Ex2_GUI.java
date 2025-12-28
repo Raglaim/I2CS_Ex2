@@ -188,7 +188,7 @@ public class Ex2_GUI {
             case 2 -> Color.red;
             case 3 -> Color.green;
             case 4 -> Color.blue;
-            default -> null;
+            default -> Color.gray;
         };
     }
 }
